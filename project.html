@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Project Plan: AI Resume Analyzer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutral & Slate -->
+    <!-- Application Structure Plan: The application is structured as a top-down narrative dashboard. It starts with a high-level overview and key feature cards. The core is an interactive "Project Roadmap" section where users can click buttons to dynamically view details for each phase (tasks, deliverables, and a dynamic chart). This is more engaging than a static list and allows for focused exploration. This is followed by categorized sections for the tech stack and future plans, breaking down complex lists into digestible cards. This structure was chosen to guide the user from a broad understanding to specific details in a logical, interactive flow. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Phased Development Plan -> Goal: Show timeline & tasks -> Viz: Interactive tabbed section with buttons -> Interaction: Click a phase button to update details and a companion chart -> Justification: Encourages active exploration over passive reading, simplifies complex information. -> Library: Vanilla JS, Chart.js.
+        - Report Info: Core Features -> Goal: Quick summary of capabilities -> Viz: Grid of cards with Unicode icons -> Interaction: Hover effects -> Justification: More visually scannable and engaging than a bulleted list. -> Library: HTML/Tailwind.
+        - Report Info: Technology Stack -> Goal: Organize technical details -> Viz: Categorized cards (Frontend, Backend) -> Interaction: None -> Justification: Grouping improves readability over a long flat list. -> Library: HTML/Tailwind.
+        - Report Info: Task Breakdown per Phase (Synthesized) -> Goal: Visualize relative effort -> Viz: Dynamic Donut Chart -> Interaction: Updates on phase selection, tooltips on hover -> Justification: Adds a quantitative visual summary to the qualitative task list. -> Library: Chart.js.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #14b8a6;
+        }
+        .phase-btn {
+            transition: all 0.3s ease;
+        }
+        .phase-btn.active {
+            background-color: #0d9488;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .feature-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800">
+
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <header class="py-6 border-b border-stone-200">
+            <div class="flex flex-col sm:flex-row justify-between items-center">
+                <h1 class="text-2xl sm:text-3xl font-bold text-teal-700">AI Resume Analyzer</h1>
+                <nav class="mt-4 sm:mt-0">
+                    <ul class="flex space-x-4 sm:space-x-6">
+                        <li><a href="#overview" class="nav-link text-stone-600 font-medium">Overview</a></li>
+                        <li><a href="#roadmap" class="nav-link text-stone-600 font-medium">Roadmap</a></li>
+                        <li><a href="#tech" class="nav-link text-stone-600 font-medium">Technology</a></li>
+                        <li><a href="#future" class="nav-link text-stone-600 font-medium">Future</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <main>
+            <section id="overview" class="py-16 text-center">
+                <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Project Plan at a Glance</h2>
+                <p class="mt-4 max-w-3xl mx-auto text-lg text-stone-600">This interactive document outlines the development plan for the AI Resume Analyzer. Its goal is to transform raw resume and job description text into actionable insights, helping users tailor their resumes for specific roles and improve their chances with Applicant Tracking Systems (ATS).</p>
+                
+                <div class="mt-12">
+                    <h3 class="text-2xl font-semibold text-stone-700 mb-8">Core Features</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <div class="feature-card bg-white p-6 rounded-xl shadow-sm border border-stone-100">
+                            <div class="text-4xl mb-3">📄</div>
+                            <h4 class="font-semibold text-lg">Resume Parsing</h4>
+                            <p class="text-stone-500 text-sm mt-1">Upload and extract text from PDF, DOCX, and TXT files.</p>
+                        </div>
+                        <div class="feature-card bg-white p-6 rounded-xl shadow-sm border border-stone-100">
+                            <div class="text-4xl mb-3">✨</div>
+                            <h4 class="font-semibold text-lg">Gemini AI Analysis</h4>
+                            <p class="text-stone-500 text-sm mt-1">AI-powered analysis for keywords, skills, and ATS optimization.</p>
+                        </div>
+                        <div class="feature-card bg-white p-6 rounded-xl shadow-sm border border-stone-100">
+                            <div class="text-4xl mb-3">👤</div>
+                            <h4 class="font-semibold text-lg">User Authentication</h4>
+                            <p class="text-stone-500 text-sm mt-1">Secure registration and login to save and track progress.</p>
+                        </div>
+                        <div class="feature-card bg-white p-6 rounded-xl shadow-sm border border-stone-100">
+                            <div class="text-4xl mb-3">🗂️</div>
+                            <h4 class="font-semibold text-lg">Analysis History</h4>
+                            <p class="text-stone-500 text-sm mt-1">Users can save and revisit all their past resume analyses.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="roadmap" class="py-16 bg-stone-100 rounded-2xl">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Interactive Project Roadmap</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-stone-600">Explore the project's development timeline, phase by phase. Click on a phase to see its goals, tasks, deliverables, and a visual breakdown of the work involved.</p>
+                </div>
+
+                <div class="mt-12 flex justify-center space-x-2 sm:space-x-4">
+                    <button id="btn-phase1" class="phase-btn px-4 py-2 sm:px-6 sm:py-3 rounded-full font-semibold text-sm sm:text-base bg-white text-stone-700 shadow-sm border border-stone-200">Phase 1: Foundation</button>
+                    <button id="btn-phase2" class="phase-btn px-4 py-2 sm:px-6 sm:py-3 rounded-full font-semibold text-sm sm:text-base bg-white text-stone-700 shadow-sm border border-stone-200">Phase 2: AI & UX</button>
+                    <button id="btn-phase3" class="phase-btn px-4 py-2 sm:px-6 sm:py-3 rounded-full font-semibold text-sm sm:text-base bg-white text-stone-700 shadow-sm border border-stone-200">Phase 3: Polish</button>
+                </div>
+
+                <div id="phase-details" class="mt-10 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center p-6">
+                    <div>
+                        <h3 id="phase-title" class="text-2xl font-bold text-teal-700"></h3>
+                        <p id="phase-goal" class="mt-2 text-stone-600"></p>
+                        <p id="phase-duration" class="mt-3 font-semibold text-sm text-stone-500"></p>
+
+                        <div class="mt-6">
+                            <h4 class="font-semibold text-lg mb-2">Key Tasks:</h4>
+                            <ul id="phase-tasks" class="space-y-2 list-disc list-inside text-stone-700">
+                            </ul>
+                        </div>
+                         <div class="mt-6">
+                            <h4 class="font-semibold text-lg mb-2">Deliverables:</h4>
+                            <ul id="phase-deliverables" class="space-y-2 list-disc list-inside text-stone-700">
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="phaseChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tech" class="py-16">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Technology & Tools</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-stone-600">The application is built on the MERN stack, leveraging modern libraries and APIs to create a robust and scalable solution. Here's a look at the key components.</p>
+                </div>
+                <div class="mt-12 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100">
+                        <h3 class="font-bold text-lg text-teal-700">Frontend</h3>
+                        <ul class="mt-3 space-y-1 text-sm text-stone-600">
+                            <li><strong>React.js</strong>: Core UI library</li>
+                            <li><strong>Tailwind CSS</strong>: Utility-first styling</li>
+                            <li><strong>Chart.js</strong>: Data visualization</li>
+                            <li><strong>Axios</strong>: HTTP requests</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100">
+                        <h3 class="font-bold text-lg text-teal-700">Backend</h3>
+                        <ul class="mt-3 space-y-1 text-sm text-stone-600">
+                            <li><strong>Node.js & Express</strong>: Server environment</li>
+                            <li><strong>Mongoose</strong>: MongoDB object modeling</li>
+                            <li><strong>JWT</strong>: Secure authentication</li>
+                            <li><strong>Multer, pdf-parse</strong>: File handling & parsing</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100">
+                        <h3 class="font-bold text-lg text-teal-700">AI & Database</h3>
+                        <ul class="mt-3 space-y-1 text-sm text-stone-600">
+                            <li><strong>Google Gemini API</strong>: Core AI analysis</li>
+                            <li><strong>MongoDB</strong>: NoSQL document database</li>
+                            <li><strong>MongoDB Atlas</strong>: Cloud hosting for DB</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="future" class="py-16 bg-stone-100 rounded-2xl">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Future Vision</h2>
+                     <p class="mt-4 max-w-2xl mx-auto text-lg text-stone-600">The project is designed for growth. This section outlines considerations for technical scalability and potential new features to further enhance the product's value.</p>
+                </div>
+                <div class="mt-12 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100">
+                        <h3 class="font-bold text-lg text-teal-700">Scalability Plans</h3>
+                        <ul class="mt-3 space-y-2 text-sm text-stone-600 list-disc list-inside">
+                            <li><strong>Caching</strong>: Implement Redis for frequently accessed data to reduce database load.</li>
+                            <li><strong>Queueing</strong>: Use a message queue for long-running analysis tasks to improve responsiveness.</li>
+                            <li><strong>Serverless Functions</strong>: Move specific logic (like API calls) to serverless functions for cost and scaling efficiency.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100">
+                        <h3 class="font-bold text-lg text-teal-700">Potential Features</h3>
+                        <ul class="mt-3 space-y-2 text-sm text-stone-600 list-disc list-inside">
+                             <li><strong>Advanced Scoring</strong>: Develop a more sophisticated resume scoring algorithm.</li>
+                             <li><strong>Interview Prep</strong>: Generate potential interview questions based on the analysis.</li>
+                             <li><strong>Content Generation</strong>: Assist users in writing and refining resume bullet points.</li>
+                             <li><strong>Full Resume Builder</strong>: Expand from analysis to a complete resume creation tool.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="text-center py-8 mt-10 border-t border-stone-200">
+            <p class="text-sm text-stone-500">&copy; 2025 AI Resume Analyzer Project. All rights reserved.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const phaseData = {
+                phase1: {
+                    title: 'Phase 1: Foundation & Core AI Integration',
+                    goal: 'Set up the basic MERN architecture, enable resume parsing, and achieve the first successful Gemini API integration for basic analysis.',
+                    duration: 'Estimated: 3-4 Weeks',
+                    tasks: [
+                        'Initialize Git, React, and Node.js projects.',
+                        'Set up Express server and MongoDB connection.',
+                        'Implement resume parsing for PDF and DOCX files.',
+                        'Integrate Gemini API for basic keyword matching.',
+                        'Build a basic frontend UI for upload and display.'
+                    ],
+                    deliverables: [
+                        'Runnable MERN stack setup.',
+                        'Working resume text extraction.',
+                        'Backend endpoint to call Gemini API.',
+                        'Basic UI to trigger and view analysis.'
+                    ],
+                    chartData: {
+                        labels: ['Setup & Config', 'Backend Logic', 'Parsing', 'Frontend UI'],
+                        data: [25, 35, 20, 20],
+                    }
+                },
+                phase2: {
+                    title: 'Phase 2: Advanced AI Analysis & Refined UX',
+                    goal: 'Enhance the AI\'s analytical depth, structure its output, and create a user-friendly, segmented display for feedback. Implement user authentication.',
+                    duration: 'Estimated: 4-5 Weeks',
+                    tasks: [
+                        'Engineer advanced prompts for Gemini (skills gap, verbs, etc.).',
+                        'Develop backend logic to handle structured AI responses.',
+                        'Design and build a rich, categorized frontend display.',
+                        'Implement JWT-based user registration and login.',
+                        'Integrate database to save user analysis history.'
+                    ],
+                    deliverables: [
+                        'Gemini API providing detailed, structured analysis.',
+                        'Frontend UI with categorized, actionable sections.',
+                        'Full user authentication working.',
+                        'Users can save and retrieve past analyses.'
+                    ],
+                     chartData: {
+                        labels: ['Advanced AI Prompts', 'Frontend UX', 'Backend Logic', 'Authentication'],
+                        data: [30, 30, 25, 15],
+                    }
+                },
+                phase3: {
+                    title: 'Phase 3: Polish, Deployment & Future Enhancements',
+                    goal: 'Refine the application\'s user experience, ensure stability, deploy to a production environment, and outline future expansion.',
+                    duration: 'Estimated: 3-4 Weeks+',
+                    tasks: [
+                        'Refine frontend UX with animations and accessibility improvements.',
+                        'Harden backend with error logging and rate limiting.',
+                        'Conduct comprehensive unit, integration, and user testing.',
+                        'Deploy all services to a cloud provider (e.g., Render, Vercel).',
+                        'Create project documentation and maintenance plan.'
+                    ],
+                    deliverables: [
+                        'Production-ready, deployed application.',
+                        'Comprehensive test coverage.',
+                        'Bug resolution and performance tuning.',
+                        'Basic project documentation.'
+                    ],
+                     chartData: {
+                        labels: ['Testing & QA', 'Deployment', 'UX Refinement', 'Backend Hardening'],
+                        data: [35, 25, 20, 20],
+                    }
+                }
+            };
+
+            const phaseTitleEl = document.getElementById('phase-title');
+            const phaseGoalEl = document.getElementById('phase-goal');
+            const phaseDurationEl = document.getElementById('phase-duration');
+            const phaseTasksEl = document.getElementById('phase-tasks');
+            const phaseDeliverablesEl = document.getElementById('phase-deliverables');
+            const buttons = [
+                document.getElementById('btn-phase1'),
+                document.getElementById('btn-phase2'),
+                document.getElementById('btn-phase3')
+            ];
+
+            let phaseChart;
+            const ctx = document.getElementById('phaseChart').getContext('2d');
+
+            function createOrUpdateChart(data, labels) {
+                if (phaseChart) {
+                    phaseChart.destroy();
+                }
+                phaseChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Work Distribution',
+                            data: data,
+                            backgroundColor: [
+                                'rgba(20, 184, 166, 0.7)',
+                                'rgba(15, 118, 110, 0.7)',
+                                'rgba(100, 116, 139, 0.7)',
+                                'rgba(51, 65, 85, 0.7)'
+                            ],
+                            borderColor: [
+                                'rgba(20, 184, 166, 1)',
+                                'rgba(15, 118, 110, 1)',
+                                'rgba(100, 116, 139, 1)',
+                                'rgba(51, 65, 85, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed !== null) {
+                                            label += context.parsed + '%';
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            function updatePhaseDetails(phaseKey) {
+                const data = phaseData[phaseKey];
+                phaseTitleEl.textContent = data.title;
+                phaseGoalEl.textContent = data.goal;
+                phaseDurationEl.textContent = data.duration;
+                phaseTasksEl.innerHTML = data.tasks.map(task => `<li>${task}</li>`).join('');
+                phaseDeliverablesEl.innerHTML = data.deliverables.map(d => `<li>${d}</li>`).join('');
+                
+                createOrUpdateChart(data.chartData.data, data.chartData.labels);
+
+                buttons.forEach(btn => btn.classList.remove('active'));
+                document.getElementById(`btn-${phaseKey}`).classList.add('active');
+            }
+
+            buttons.forEach((button, index) => {
+                button.addEventListener('click', () => {
+                    updatePhaseDetails(`phase${index + 1}`);
+                });
+            });
+
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            updatePhaseDetails('phase1');
+        });
+    </script>
+
+</body>
+</html>
